@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, ScrollView ,StyleSheet } from 'react-native';
+import { View, Text, ScrollView ,StyleSheet, Button } from 'react-native';
 import { Card ,Icon} from 'react-native-elements';
 import {PRODUCTS} from '../shared/products';
 
@@ -53,6 +53,7 @@ class Home extends Component {
 
     static navigationOptions = {
         title: 'Home'
+
     }
     markFavorite() {
         this.setState({favorite: true});
