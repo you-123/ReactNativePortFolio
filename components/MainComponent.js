@@ -14,7 +14,7 @@ const DirectoryNavigator = createStackNavigator(
         initialRouteName:'Directory',
         navigationOptions: {
             headerStyle: {
-                backgroundColor: 'crimson'
+                backgroundColor: '#DC143C'
             },
             headerTintColor: '#fff',
             headerTitleStyle: {
@@ -30,7 +30,7 @@ const HomeNavigator = createStackNavigator(
     {
         navigationOptions: {
             headerStyle: {
-                backgroundColor: '#5637DD'
+                backgroundColor: '#DC143C'
             },
             headerTintColor: '#fff',
             headerTitleStyle: {
@@ -45,7 +45,7 @@ const MainNavigator = createDrawerNavigator(
         Catalog: { screen: DirectoryNavigator }
     },
     {
-        drawerBackgroundColor: '#CEC8FF'
+        drawerBackgroundColor: '#f8b9c6'
     }
 );
 class Main extends Component {
