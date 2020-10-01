@@ -16,6 +16,9 @@ function RenderItem(props) {
                     {item.ProductDescription}
                 </Text>
                 <View style={styles.cardRow}>
+                <Text >
+                  Price:{item.price}
+                </Text>
                 <Icon  
                     name={props.favorite ? 'heart' : 'heart-o'}
                     type='font-awesome'
