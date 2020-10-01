@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Text, View,StyleSheet } from 'react-native';
-import { Card, Icon } from 'react-native-elements';
+import { Text, View,StyleSheet, ScrollView } from 'react-native';
+import { Card,Icon } from 'react-native-elements';
 import {PRODUCTS} from '../shared/products';
 
 
@@ -11,19 +11,22 @@ function RenderProduct(props)
             <Card
                 featuredTitle={product.name}
                 image={require('./images/artculsmall0.jpg')}>
-                <Text style={{margin: 10}}>
+                <Text style={{margin:10}}>
                     {product.ProductDescription}
                 </Text>
                 <View style={styles.cardRow}>
-                <Icon  
-                    name={props.favorite ? 'heart' : 'heart-o'}
-                    type='font-awesome'
-                    color='#f50'
-                    raised
-                    reverse
-                    onPress={() => props.favorite ? 
-                        console.log('Already set as a favorite') : props.markFavorite()}
-                />
+                <Text >
+                  Price:{product.price}
+                </Text>
+                <Icon
+                        name={props.favorite ? 'heart' : 'heart-o'}
+                        type='font-awesome'
+                        color='#f50'
+                        raised
+                        reverse
+                        onPress={() => props.favorite ?
+                            console.log('Already set as a favorite') : props.markFavorite()}
+                    />
                 <Icon  style={styles.cardItem}
                     name='shopping-basket' 
                     type='font-awesome'
@@ -63,11 +66,16 @@ class  SingleProduct extends Component {
     render() {
         const productId = this.props.navigation.getParam('productId');
         const product = this.state.products.filter(product => product.id===productId)[0];
-        return <RenderProduct product={product}
+        return (
+        <ScrollView>
+        <RenderProduct product={product}
         favorite={this.state.favorite}
         markFavorite={() => this.markFavorite()}
         addToCart={() => this.addToCart()}
-        />;
+        />
+        </ScrollView>
+        );
+        
     }
 }
 const styles = StyleSheet.create({
