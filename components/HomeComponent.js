@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, ScrollView, StyleSheet, Button } from 'react-native';
+import { View, Text,  StyleSheet, Button, Animated } from 'react-native';
 import { Card, Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
@@ -69,6 +69,26 @@ function RenderItem(props) {
 }
 
 class Home extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            scaleValue: new Animated.Value(0)
+        };
+    }
+
+    animate() {
+        Animated.timing(
+            this.state.scaleValue,
+            {
+                toValue: 1,
+                duration: 1500
+            }
+        ).start();
+    }
+
+    componentDidMount() {
+        this.animate();
+    }
    
     static navigationOptions = {
         title: 'Home',
@@ -92,7 +112,7 @@ class Home extends Component {
 
         const productId = this.props.navigation.getParam('productId');
         return (
-            <ScrollView>
+            <Animated.ScrollView style={{transform: [{scale: this.state.scaleValue}]}}>
                 <RenderItem
                     item={this.props.products.products.filter(product => product.featured)[0]}
                     favorite={this.props.favorites.includes(productId)}
@@ -117,7 +137,7 @@ class Home extends Component {
                     isLoading={this.props.products.isLoading}
                     errMess={this.props.products.errMess}
                 />
-            </ScrollView>
+           </Animated.ScrollView>
         );
     }
 }
