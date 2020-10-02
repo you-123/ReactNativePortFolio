@@ -1,42 +1,66 @@
 import React, { Component } from 'react';
-import { View, Text, ScrollView ,StyleSheet, Button } from 'react-native';
-import { Card ,Icon} from 'react-native-elements';
-import {PRODUCTS} from '../shared/products';
+import { View, Text, ScrollView, StyleSheet, Button } from 'react-native';
+import { Card, Icon } from 'react-native-elements';
+import { connect } from 'react-redux';
+import { baseUrl } from '../shared/baseUrl';
+import Loading from './LoadingComponent';
+import { postFavorite } from '../redux/ActionCreators';
+import { postToCart } from '../redux/ActionCreators';
+const mapStateToProps = state => {
+    return {
+        products: state.products,
+        favorites: state.favorites,
+        carts: state.carts
+    };
+};
 
-
+const mapDispatchToProps = {
+    postFavorite: productId => (postFavorite(productId)),
+    postToCart: productId => (postToCart(productId))
+};
 function RenderItem(props) {
-    const  {item}=props;
+    const { item } = props;
+    if (props.isLoading) {
+        return <Loading />;
+    }
+    if (props.errMess) {
+        return (
+            <View>
+                <Text>{props.errMess}</Text>
+            </View>
+        );
+    }
     if (item) {
         return (
             <Card
                 featuredTitle={item.name}
-                image={require('./images/artculsmall0.jpg')}>
+                image={{ uri: baseUrl + item.image }}>
                 <Text
-                    style={{margin: 10}}>
+                    style={{ margin: 10 }}>
                     {item.ProductDescription}
                 </Text>
                 <View style={styles.cardRow}>
-                <Text >
-                  Price:{item.price}
-                </Text>
-                <Icon  
-                    name={props.favorite ? 'heart' : 'heart-o'}
-                    type='font-awesome'
-                    color='#f50'
-                    raised
-                    reverse
-                    onPress={() => props.favorite ? 
-                        console.log('Already set as a favorite') : props.markFavorite()}
-                />
-                <Icon  style={styles.cardItem}
-                    name='shopping-basket' 
-                    type='font-awesome'
-                    color='#f50'
-                    raised
-                    reverse
-                    onPress={() => 'shopping-basket'  ? props.addToCart() :
-                        console.log('Already in cart') }
-                />
+                    <Text >
+                        Price:{item.price}
+                    </Text>
+                    <Icon
+                        name={props.favorite ? 'heart' : 'heart-o'}
+                        type='font-awesome'
+                        color='#f50'
+                        raised
+                        reverse
+                        onPress={() => props.favorite ?
+                            console.log('Already set as a favorite') : props.markFavorite()}
+                    />
+                    <Icon style={styles.cardItem}
+                        name='shopping-basket'
+                        type='font-awesome'
+                        color='#f50'
+                        raised
+                        reverse
+                        onPress={() => 'shopping-basket' ? props.addToCart() :
+                            console.log('Already in cart')}
+                    />
                 </View>
             </Card>
         );
@@ -45,36 +69,56 @@ function RenderItem(props) {
 }
 
 class Home extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            products: PRODUCTS,
-            favorite: false
-            
-        };
-    }
-
+   
     static navigationOptions = {
-        title: 'Home'
-
+        title: 'Home',
+        headerRight: (
+            <Button
+              onPress={() => alert('This is a button!')}
+              title="Info"
+              color="#f50"
+            />
+          ),
     }
-    markFavorite() {
-        this.setState({favorite: true});
+    
+    markFavorite(productId) {
+        this.props.postFavorite(productId);
     }
-    addToCart() {
-        console.log('Already in cart');
+    addToCart(productId) {
+        this.props.postToCart(productId);
+        console.log('Added   To cart');
     }
     render() {
+
+        const productId = this.props.navigation.getParam('productId');
         return (
             <ScrollView>
-                <RenderItem 
-                    item={this.state.products.filter(product=> product.featured)[0]} 
-                    favorite={this.state.favorite}
-                    markFavorite={() => this.markFavorite()}
-                    addToCart={() => this.addToCart()}
-                    />
+                <RenderItem
+                    item={this.props.products.products.filter(product => product.featured)[0]}
+                    favorite={this.props.favorites.includes(productId)}
+                    markFavorite={() => this.markFavorite(productId)}
+                    addToCart={() => this.addToCart(productId)}
+                    isLoading={this.props.products.isLoading}
+                    errMess={this.props.products.errMess}
+                />
+                <RenderItem
+                    item={this.props.products.products.filter(product => product.featured)[1]}
+                    favorite={this.props.favorites.includes(productId)}
+                    markFavorite={() => this.markFavorite(productId)}
+                    addToCart={() => this.addToCart(productId)}
+                    isLoading={this.props.products.isLoading}
+                    errMess={this.props.products.errMess}
+                />
+                <RenderItem
+                    item={this.props.products.products.filter(product => product.featured)[2]}
+                    favorite={this.props.favorites.includes(productId)}
+                    markFavorite={() => this.markFavorite(productId)}
+                    addToCart={() => this.addToCart(productId)}
+                    isLoading={this.props.products.isLoading}
+                    errMess={this.props.products.errMess}
+                />
             </ScrollView>
-        ); 
+        );
     }
 }
 const styles = StyleSheet.create({
@@ -90,4 +134,4 @@ const styles = StyleSheet.create({
         margin: 10
     }
 });
-export default Home;
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

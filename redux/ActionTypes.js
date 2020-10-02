@@ -4,3 +4,5 @@ export const PRODUCTS_FAILED = 'PRODUCTS_FAILED';
 
 export const ADD_COMMENTS = 'ADD_COMMENTS';
 export const COMMENTS_FAILED = 'COMMENTS_FAILED';
+export const ADD_FAVORITE = 'ADD_FAVORITE';
+export const ADD_TO_CART = 'ADD_TO_CART';

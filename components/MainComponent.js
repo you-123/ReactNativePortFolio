@@ -1,16 +1,24 @@
 import React, { Component } from 'react';
 import Home from './HomeComponent';
 import Directory from './DirectoryComponent';
-import  SingleProduct from './ProductDetailComponent';
-import { View, Platform, StyleSheet, Text, ScrollView, Image  } from 'react-native';
-import {createStackNavigator, createDrawerNavigator ,DrawerItems }  from 'react-navigation';
-import { Icon, Button  } from 'react-native-elements';
+import SingleProduct from './ProductDetailComponent';
+import { View, Platform, StyleSheet, Text, ScrollView, Image } from 'react-native';
+import { createStackNavigator, createDrawerNavigator, DrawerItems } from 'react-navigation';
+import { Icon, Button } from 'react-native-elements';
 import SafeAreaView from 'react-native-safe-area-view';
+import { connect } from 'react-redux';
+import { fetchProducts, fetchComments } from '../redux/ActionCreators';
+const mapDispatchToProps = {
+    fetchProducts,
+    fetchComments
+
+};
+
 const DirectoryNavigator = createStackNavigator(
     {
-        Directory:{ 
+        Directory: {
             screen: Directory,
-            navigationOptions: ({navigation}) => ({
+            navigationOptions: ({ navigation }) => ({
                 headerLeft: <Icon
                     name='list'
                     type='font-awesome'
@@ -19,10 +27,10 @@ const DirectoryNavigator = createStackNavigator(
                 />
             })
         },
-        SingleProduct: { screen:SingleProduct }
-    }, 
+        SingleProduct: { screen: SingleProduct }
+    },
     {
-        initialRouteName:'Directory',
+        initialRouteName: 'Directory',
         navigationOptions: {
             headerStyle: {
                 backgroundColor: '#DC143C'
@@ -39,7 +47,7 @@ const HomeNavigator = createStackNavigator(
         Home: { screen: Home }
     },
     {
-        navigationOptions: ({navigation}) => ({
+        navigationOptions: ({ navigation }) => ({
             headerStyle: {
                 backgroundColor: '#DC143C'
             },
@@ -58,15 +66,23 @@ const HomeNavigator = createStackNavigator(
 );
 const CustomDrawerContentComponent = props => (
     <ScrollView>
-        <SafeAreaView 
+        <SafeAreaView
             style={styles.container}
-            forceInset={{top: 'always', horizontal: 'never'}}>
+            forceInset={{ top: 'always', horizontal: 'never' }}>
             <View style={styles.drawerHeader}>
-                <View style={{flex: 1}}>
+                <View style={{ flex: 1 }}>
                     <Image source={require('./images/logo.png')} style={styles.drawerImage} />
                 </View>
-                <View style={{flex: 2}}>
-                    <Text style={styles.drawerHeaderText}>XYZ Shopping</Text>
+                <View style={{ flex: 2 }}>
+                    <Text style={styles.drawerHeaderText}>XYZ Shopping </Text>
+                </View>
+                <View style={{ flex: 1, backgroundColor: '#f50' }}>
+                    <Button
+                        title="CART"
+                        type="outline"
+                        color="#f50"
+                    />
+                    <Text style={{ backgroundColor: '#f50' }}>0</Text>
                 </View>
             </View>
             <DrawerItems {...props} />
@@ -76,9 +92,10 @@ const CustomDrawerContentComponent = props => (
 
 const MainNavigator = createDrawerNavigator(
     {
-        Home: { screen: HomeNavigator,
+        Home: {
+            screen: HomeNavigator,
             navigationOptions: {
-                drawerIcon: ({tintColor}) => (
+                drawerIcon: ({ tintColor }) => (
                     <Icon
                         name='home'
                         type='font-awesome'
@@ -86,10 +103,12 @@ const MainNavigator = createDrawerNavigator(
                         color={tintColor}
                     />
                 )
-            } },
-        Catalog: { screen: DirectoryNavigator,
+            }
+        },
+        Catalog: {
+            screen: DirectoryNavigator,
             navigationOptions: {
-                drawerIcon: ({tintColor}) => (
+                drawerIcon: ({ tintColor }) => (
                     <Icon
                         name='list'
                         type='font-awesome'
@@ -97,7 +116,8 @@ const MainNavigator = createDrawerNavigator(
                         color={tintColor}
                     />
                 )
-            }}
+            }
+        }
     },
     {
         drawerBackgroundColor: '#f8b9c6',
@@ -105,15 +125,20 @@ const MainNavigator = createDrawerNavigator(
     }
 );
 class Main extends Component {
-  
+
+    componentDidMount() {
+        this.props.fetchProducts();
+        this.props.fetchComments();
+
+    }
 
     render() {
-        return(
-        <View style={{flex: 1, paddingTop: Platform.OS === 'ios' ? 0 : Expo.Constants.statusBarHeight }}>
-        <MainNavigator />
-           </View>
-       
-            );
+        return (
+            <View style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 0 : Expo.Constants.statusBarHeight }}>
+                <MainNavigator />
+            </View>
+
+        );
     }
 }
 const styles = StyleSheet.create({
@@ -144,4 +169,4 @@ const styles = StyleSheet.create({
         fontSize: 24
     }
 });
-export default Main;
+export default connect(null, mapDispatchToProps)(Main);
