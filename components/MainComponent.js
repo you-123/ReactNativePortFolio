@@ -8,6 +8,8 @@ import { Icon, Button } from 'react-native-elements';
 import SafeAreaView from 'react-native-safe-area-view';
 import { connect } from 'react-redux';
 import { fetchProducts, fetchComments } from '../redux/ActionCreators';
+import Favorites from './FavoritesComponent';
+import Carts from './CartsComponent';
 const mapDispatchToProps = {
     fetchProducts,
     fetchComments
@@ -57,6 +59,50 @@ const HomeNavigator = createStackNavigator(
             },
             headerLeft: <Icon
                 name='home'
+                type='font-awesome'
+                iconStyle={styles.stackIcon}
+                onPress={() => navigation.toggleDrawer()}
+            />
+        })
+    }
+);
+const FavoritesNavigator = createStackNavigator(
+    {
+        Favorites: { screen: Favorites }
+    },
+    {
+        navigationOptions: ({ navigation }) => ({
+            headerStyle: {
+                backgroundColor: '#DC143C'
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+                color: '#fff'
+            },
+            headerLeft: <Icon
+                name='heart'
+                type='font-awesome'
+                iconStyle={styles.stackIcon}
+                onPress={() => navigation.toggleDrawer()}
+            />
+        })
+    }
+);
+const CartsNavigator = createStackNavigator(
+    {
+        Carts: { screen: Carts }
+    },
+    {
+        navigationOptions: ({ navigation }) => ({
+            headerStyle: {
+                backgroundColor: '#DC143C'
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+                color: '#fff'
+            },
+            headerLeft: <Icon
+                name='shopping-basket'
                 type='font-awesome'
                 iconStyle={styles.stackIcon}
                 onPress={() => navigation.toggleDrawer()}
@@ -117,8 +163,37 @@ const MainNavigator = createDrawerNavigator(
                     />
                 )
             }
+        },
+        Favorites: {
+            screen: FavoritesNavigator,
+            navigationOptions: {
+                drawerLabel: 'My Favorites',
+                drawerIcon: ({ tintColor }) => (
+                    <Icon
+                        name='heart'
+                        type='font-awesome'
+                        size={24}
+                        color={tintColor}
+                    />
+                )
+            }
+        } ,
+        Carts: {
+            screen: CartsNavigator,
+            navigationOptions: {
+                drawerLabel: 'My Cart',
+                drawerIcon: ({ tintColor }) => (
+                    <Icon
+                        name='shopping-basket'
+                        type='font-awesome'
+                        size={24}
+                        color={tintColor}
+                    />
+                )
+            }
         }
     },
+
     {
         drawerBackgroundColor: '#f8b9c6',
         contentComponent: CustomDrawerContentComponent

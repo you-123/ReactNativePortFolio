@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text,  StyleSheet, Button, Animated } from 'react-native';
+import { View, Text,  StyleSheet, Button, Animated,FlatList } from 'react-native';
 import { Card, Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
@@ -15,58 +15,10 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-    postFavorite: productId => (postFavorite(productId)),
+    postFavorite:productId => (postFavorite(productId)),
     postToCart: productId => (postToCart(productId))
 };
-function RenderItem(props) {
-    const { item } = props;
-    if (props.isLoading) {
-        return <Loading />;
-    }
-    if (props.errMess) {
-        return (
-            <View>
-                <Text>{props.errMess}</Text>
-            </View>
-        );
-    }
-    if (item) {
-        return (
-            <Card
-                featuredTitle={item.name}
-                image={{ uri: baseUrl + item.image }}>
-                <Text
-                    style={{ margin: 10 }}>
-                    {item.ProductDescription}
-                </Text>
-                <View style={styles.cardRow}>
-                    <Text >
-                        Price:{item.price}
-                    </Text>
-                    <Icon
-                        name={props.favorite ? 'heart' : 'heart-o'}
-                        type='font-awesome'
-                        color='#f50'
-                        raised
-                        reverse
-                        onPress={() => props.favorite ?
-                            console.log('Already set as a favorite') : props.markFavorite()}
-                    />
-                    <Icon style={styles.cardItem}
-                        name='shopping-basket'
-                        type='font-awesome'
-                        color='#f50'
-                        raised
-                        reverse
-                        onPress={() => 'shopping-basket' ? props.addToCart() :
-                            console.log('Already in cart')}
-                    />
-                </View>
-            </Card>
-        );
-    }
-    return <View />;
-}
+
 
 class Home extends Component {
     constructor(props) {
@@ -101,44 +53,63 @@ class Home extends Component {
           ),
     }
     
-    markFavorite(productId) {
-        this.props.postFavorite(productId);
-    }
-    addToCart(productId) {
-        this.props.postToCart(productId);
-        console.log('Added   To cart');
-    }
+  
     render() {
+        const { navigate } = this.props.navigation;
+        const renderFeaturedItem = ({item}) => {
+            return (
+                <Animated.ScrollView style={{transform: [{scale: this.state.scaleValue}]}}>
+                <Card
+                featuredTitle={item.name}
+                image={{ uri: baseUrl + item.image }}>
+                <Text
+                    style={{ margin: 10 }}>
+                    {item.ProductDescription}
+                </Text>
+                <View style={styles.cardRow}>
+                    <Text >
+                        Price:{item.price}
+                    </Text>
+                    <Icon
+                        name='angle-left'
+                        type='font-awesome'
+                        color='#f8b9c6'
+                        raised
+                        reverse
+                        onPress={() => navigate('SingleProduct', { productId: item.id })}
+                    />
+                    <Icon style={styles.cardItem}
+                        name='angle-right'
+                        type='font-awesome'
+                        color='#f8b9c6'
+                        raised
+                        reverse
+                        onPress={() => navigate('SingleProduct', { productId: item.id })}
+                    />
+                </View>
+            </Card>
+            </Animated.ScrollView>
+            );
+        };
 
-        const productId = this.props.navigation.getParam('productId');
-        return (
-            <Animated.ScrollView style={{transform: [{scale: this.state.scaleValue}]}}>
-                <RenderItem
-                    item={this.props.products.products.filter(product => product.featured)[0]}
-                    favorite={this.props.favorites.includes(productId)}
-                    markFavorite={() => this.markFavorite(productId)}
-                    addToCart={() => this.addToCart(productId)}
-                    isLoading={this.props.products.isLoading}
-                    errMess={this.props.products.errMess}
-                />
-                <RenderItem
-                    item={this.props.products.products.filter(product => product.featured)[1]}
-                    favorite={this.props.favorites.includes(productId)}
-                    markFavorite={() => this.markFavorite(productId)}
-                    addToCart={() => this.addToCart(productId)}
-                    isLoading={this.props.products.isLoading}
-                    errMess={this.props.products.errMess}
-                />
-                <RenderItem
-                    item={this.props.products.products.filter(product => product.featured)[2]}
-                    favorite={this.props.favorites.includes(productId)}
-                    markFavorite={() => this.markFavorite(productId)}
-                    addToCart={() => this.addToCart(productId)}
-                    isLoading={this.props.products.isLoading}
-                    errMess={this.props.products.errMess}
-                />
-           </Animated.ScrollView>
-        );
+        if (this.props.products.isLoading) {
+            return <Loading />;
+        }
+        if (this.props.products.errMess) {
+            return (
+                <View>
+                    <Text>{this.props.products.errMess}</Text>
+                </View>
+            );
+        }
+    return (
+        <FlatList
+            data={this.props.products.products.filter(product => product.featured)}
+            renderItem={renderFeaturedItem}
+            keyExtractor={item => item.id.toString()}
+        />
+    );
+       
     }
 }
 const styles = StyleSheet.create({
